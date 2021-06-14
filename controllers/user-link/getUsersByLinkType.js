@@ -2,7 +2,7 @@ const UserLink = require("../../models/UserLink")
 
 const getUsersByLinkType = async (req, res) => {
     try{
-        const { userId } = req.tokenData;
+        const userId = req.query.userId;
         const type = req.query.type;
         if (type === "following") {
             const followings = await UserLink.find({ user: userId }).select("follows").populate("follows");
