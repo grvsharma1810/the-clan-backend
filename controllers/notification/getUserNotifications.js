@@ -4,7 +4,7 @@ const getUserNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find({ targetUser: req.tokenData.userId })
             .sort({ time: 'desc' })
-            .populate('sourceUser')
+            .populate('sourceUser')        
         res.status(201).json({ notifications });
     } catch (error) {
         console.log(error);

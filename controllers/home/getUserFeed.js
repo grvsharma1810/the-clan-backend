@@ -1,15 +1,15 @@
 const Post = require("../../models/Post");
 const UserLink = require("../../models/UserLink");
 
-const getUserFeed = async (req, res) => {
-    try {
+const getUserFeed = async (req, res) => {    
+    try {        
         const { userId } = req.tokenData;
         let { current, size } = req.query;
         current = parseInt(current);
         size = parseInt(size);        
         let users = await UserLink.find({ user: userId }).select("follows");
         users = users.map((user) => user.follows);  // TODO: find a way to remove this map method since it adds extra computation
-        const postOfFollowingUsers = await Post.find({ $or: [{ user: { $in: users } }, { user: userId }] })
+        postOfFollowingUsers = await Post.find({ $or: [{ user: { $in: users } }, { user: userId }] })
             .sort({ time: 'desc' })
             .limit(size)
             .skip(current)
@@ -25,7 +25,7 @@ const getUserFeed = async (req, res) => {
             })
             .populate('user');
 
-        if ((current + size + 1) >= await Post.countDocuments()) {
+        if ((current + size + 1) >= await Post.find({ $or: [{ user: { $in: users } }, { user: userId }] }).countDocuments()) {
             next = null;
         } else {
             next = current + size;
